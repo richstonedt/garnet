@@ -58,11 +58,13 @@ var vm = new Vue({
                     } else {
                         var data = {
                             userName: vm.userName,
-                            password: vm.password,
+                            password: CryptoJS.MD5(vm.password).toString(),
                             // kaptcha: vm.captcha,
                             // nowTime: nowTime,
                             appCode: appCode
                         };
+                        // console.log('login data:', data);
+                        // return;
                         $.ajax({
                             type: "POST",
                             url: baseURL + "users/login",
