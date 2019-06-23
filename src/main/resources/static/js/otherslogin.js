@@ -40,9 +40,9 @@ var vm = new Vue({
             var redirectUrl = loc.substr(indexOfUrl+12, indexOfAppCode-indexOfUrl-13);//从=号后面的内容
             var appCode = loc.substr(indexOfAppCode + 8, length - indexOfAppCode-8);
 
-            if (vm.userName != null && vm.userName != "") {
+            /* if (vm.userName != null && vm.userName != "") {
                 document.cookie = "userName=" + vm.userName + ";";
-            }
+            } */
 
             $.ajax({
                 type: "GET",
@@ -97,7 +97,7 @@ var vm = new Vue({
                                 } else if ("应用不存在" == result.message) {
                                     //没有携带appCode
                                     // console.log("我没有携带appCode");
-                                    vm.redirectToAppListWhenNotAppCode(vm.userName, vm.password);
+                                    vm.redirectToAppListWhenNotAppCode(vm.userName, CryptoJS.MD5(vm.password).toString());
                                 } else {
                                     vm.error = true;
                                     vm.errorMsg = result.message;
