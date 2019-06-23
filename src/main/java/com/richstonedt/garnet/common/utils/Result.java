@@ -117,7 +117,6 @@ public class Result extends HashMap<String, Object> {
 	 * @return the r
 	 * @since garnet-core-be-fe 1.0.0
 	 */
-	@Override
 	public Result put(String key, Object value) {
 		super.put(key, value);
 		return this;

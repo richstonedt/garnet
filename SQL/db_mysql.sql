@@ -1,233 +1,339 @@
-SET FOREIGN_KEY_CHECKS = 0;
--- ----------------------------
--- Table structure for gar_log
--- ----------------------------
-DROP TABLE IF EXISTS `gar_log`;gar_user_synchronize
-CREATE TABLE `gar_log` (
-  `id`           BIGINT(20) NOT NULL AUTO_INCREMENT,
-  `username`     VARCHAR(50)         DEFAULT NULL
-  COMMENT '用户名',
-  `operation`    VARCHAR(50)         DEFAULT NULL
-  COMMENT '用户操作',
-  `method`       VARCHAR(50)         DEFAULT NULL
-  COMMENT '请求方法',
-  `url`          VARCHAR(255)        DEFAULT NULL
-  COMMENT '请求URL',
-  `ip`           VARCHAR(255)        DEFAULT NULL
-  COMMENT 'ip',
-  `sql_text`     TEXT COMMENT '执行sql',
-  `created_time` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP
-  COMMENT '创建时间',
-  PRIMARY KEY (`id`)
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for gar_log_operation
--- ----------------------------
-DROP TABLE IF EXISTS `gar_log_operation`;
-CREATE TABLE `gar_log_operation` (
-  `id`        BIGINT(20) NOT NULL,
-  `url`       VARCHAR(200) DEFAULT NULL
-  COMMENT '请求URL',
-  `method`    VARCHAR(50)  DEFAULT NULL
-  COMMENT '请求方法',
-  `operation` VARCHAR(100) DEFAULT NULL
-  COMMENT '操作',
-  PRIMARY KEY (`id`)
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- ----------------------------
--- Records of gar_log_operation
--- ----------------------------
-INSERT INTO `gar_log_operation` VALUES ('1', '/login', 'POST', '用户登录');
-INSERT INTO `gar_log_operation` VALUES ('2', '/userRoles', 'GET', '查询用户权限列表');
-INSERT INTO `gar_log_operation` VALUES ('3', '/userList', 'GET', '查询用户名列表');
-INSERT INTO `gar_log_operation` VALUES ('4', '/userRole', 'POST', '新增用户权限');
-INSERT INTO `gar_log_operation` VALUES ('5', '/userRole', 'PUT', '更新用户权限');
-INSERT INTO `gar_log_operation` VALUES ('6', '/userRole', 'DELETE', '删除用户权限');
-INSERT INTO `gar_log_operation` VALUES ('7', '/distinctUserList', 'GET', '查询没有权限的用户');
-INSERT INTO `gar_log_operation` VALUES ('8', '/users', 'GET', '查询所有用户列表');
-INSERT INTO `gar_log_operation` VALUES ('9', '/password', 'POST', '修改用户密码');
-INSERT INTO `gar_log_operation` VALUES ('10', '/user', 'POST', '新增用户');
-INSERT INTO `gar_log_operation` VALUES ('12', '/user', 'PUT', '修改用户信息');
-INSERT INTO `gar_log_operation` VALUES ('13', '/user', 'DELETE', '删除用户');
-INSERT INTO `gar_log_operation` VALUES ('14', '/logs', 'GET', '查询系统日志');
-INSERT INTO `gar_log_operation` VALUES ('15', '/user/', 'GET', '查询用户信息');
-INSERT INTO `gar_log_operation` VALUES ('16', '/roleIds/', 'GET', '通过用户ID查询该用户的权限ID');
-INSERT INTO `gar_log_operation` VALUES ('17', '/kaptcha', 'GET', '获取验证码');
-INSERT INTO `gar_log_operation` VALUES ('18', '/roleUsers/', 'GET', '通过角色ID获取该角色的用户ID');
-INSERT INTO `gar_log_operation` VALUES ('19', '/usersByRole', 'GET', '通过权限ID更新该权限的用户');
-INSERT INTO `gar_log_operation` VALUES ('20', '/menu', 'GET', '查询系统菜单');
-INSERT INTO `gar_log_operation` VALUES ('21', '/token/userInfo', 'GET', '通过token查询用户信息');
-
-
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for gar_menu
--- ----------------------------
-DROP TABLE IF EXISTS `gar_menu`;
-CREATE TABLE `gar_menu` (
-  `menu_id`   BIGINT(20) NOT NULL,
-  `parent_id` BIGINT(20)   DEFAULT NULL
-  COMMENT '父菜单ID，一级菜单为0',
-  `name`      VARCHAR(50)  DEFAULT NULL
-  COMMENT '菜单名称',
-  `url`       VARCHAR(200) DEFAULT NULL
-  COMMENT '菜单URL',
-  `perms`     VARCHAR(500) DEFAULT NULL
-  COMMENT '授权(多个用逗号分隔，如：user:list,user:create)',
-  `type`      INT(11)      DEFAULT NULL
-  COMMENT '类型   0：目录   1：菜单   2：按钮',
-  `icon`      VARCHAR(50)  DEFAULT NULL
-  COMMENT '菜单图标',
-  `order_num` INT(11)      DEFAULT NULL
-  COMMENT '排序',
+-- 菜单
+CREATE TABLE `sys_menu` (
+  `menu_id` bigint NOT NULL AUTO_INCREMENT,
+  `parent_id` bigint COMMENT '父菜单ID，一级菜单为0',
+  `name` varchar(50) COMMENT '菜单名称',
+  `url` varchar(200) COMMENT '菜单URL',
+  `perms` varchar(500) COMMENT '授权(多个用逗号分隔，如：user:list,user:create)',
+  `type` int COMMENT '类型   0：目录   1：菜单   2：按钮',
+  `icon` varchar(50) COMMENT '菜单图标',
+  `order_num` int COMMENT '排序',
   PRIMARY KEY (`menu_id`)
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='菜单管理';
 
--- ----------------------------
--- Records of gar_menu
--- ----------------------------
-INSERT INTO `gar_menu` VALUES ('1', '0', '系统管理', NULL, NULL, '0', 'fa fa-cog', '0');
-INSERT INTO `gar_menu` VALUES ('2', '1', '用户管理', 'modules/user.html', NULL, '1', 'fa fa-user', '1');
-INSERT INTO `gar_menu` VALUES ('3', '1', '权限管理', 'modules/authority.html', NULL, '1', 'fa fa-th-list', '4');
-INSERT INTO `gar_menu` VALUES ('4', '1', '系统日志', 'modules/log.html', 'sys:log:list', '1', 'fa fa-file-text-o', '7');
+-- 部门
+CREATE TABLE `sys_dept` (
+  `dept_id` bigint NOT NULL AUTO_INCREMENT,
+  `parent_id` bigint COMMENT '上级部门ID，一级部门为0',
+  `name` varchar(50) COMMENT '部门名称',
+  `order_num` int COMMENT '排序',
+  `del_flag` tinyint DEFAULT 0 COMMENT '是否删除  -1：已删除  0：正常',
+  PRIMARY KEY (`dept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='部门管理';
 
-SET FOREIGN_KEY_CHECKS = 0;
+-- 系统用户
+CREATE TABLE `sys_user` (
+  `user_id` bigint NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL COMMENT '用户名',
+  `password` varchar(100) COMMENT '密码',
+  `salt` varchar(20) COMMENT '盐',
+  `email` varchar(100) COMMENT '邮箱',
+  `mobile` varchar(100) COMMENT '手机号',
+  `status` tinyint COMMENT '状态  0：禁用   1：正常',
+  `dept_id` bigint(20) COMMENT '部门ID',
+  `create_time` datetime COMMENT '创建时间',
+  PRIMARY KEY (`user_id`),
+  UNIQUE INDEX (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统用户';
 
--- ----------------------------
--- Table structure for gar_roles
--- ----------------------------
-DROP TABLE IF EXISTS `gar_roles`;
-CREATE TABLE `gar_roles` (
-  `role_id`     BIGINT(20) NOT NULL,
-  `name`        VARCHAR(100)        DEFAULT NULL
-  COMMENT '角色名称',
-  `remark`      VARCHAR(100)        DEFAULT NULL
-  COMMENT '备注',
-  `create_time` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP
-  COMMENT '创建时间',
-  PRIMARY KEY (`role_id`)
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- ----------------------------
--- Records of gar_roles
--- ----------------------------
-INSERT INTO `gar_roles` VALUES ('1', '网络指标分析', '拥有网络指标分析模块所有权限', '2017-08-25 15:52:55');
-INSERT INTO `gar_roles` VALUES ('2', '网络故障分析', '拥有网络故障分析模块所有权限', '2017-08-25 15:53:50');
-INSERT INTO `gar_roles` VALUES ('3', '业务指标分析', '拥有业务指标分析模块所有权限', '2017-08-25 15:54:19');
-INSERT INTO `gar_roles` VALUES ('4', '业务故障分析', '拥有业务故障分析模块所有权限', '2017-08-25 15:54:59');
-INSERT INTO `gar_roles` VALUES ('5', '主动告警', '拥有主动告警模块所有权限', '2017-08-25 15:55:56');
-INSERT INTO `gar_roles` VALUES ('6', '短信告警', '拥有短信告警模块所有权限', '2017-08-25 15:58:56');
-INSERT INTO `gar_roles` VALUES ('7', '用户信令回溯', '拥有用户信令回溯模块所有权限', '2017-08-25 16:01:03');
-INSERT INTO `gar_roles` VALUES ('8', '实时监控', '拥有实时监控模块所有权限', '2017-08-31 16:43:39');
-INSERT INTO `gar_roles` VALUES ('9', '重点指标分析', '拥有重点指标分析模块所有权限', '2017-08-31 16:44:02');
-INSERT INTO `gar_roles` VALUES ('10', '弱覆盖区域Gis分析', '拥有弱覆盖区域Gis分析模块的所有权限', '2017-09-05 10:53:40');
-INSERT INTO `gar_roles` VALUES ('11', 'API推送', '拥有API推送模块的所有权限', '2017-09-29 20:41:20');
-INSERT INTO `gar_roles` VALUES ('12', '质差推送', '拥有质差推送模块所有权限', '2017-10-12 15:42:44');
-INSERT INTO `gar_roles` VALUES ('13', 'Volte网络指标分析', '拥有Volte网络指标分析模块所有权限', '2017-11-09 18:48:16');
-INSERT INTO `gar_roles` VALUES ('14', 'Volte网络故障分析', '拥有Volte网络故障分析模块所有权限', '2017-11-09 18:48:41');
-
-
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for gar_user_roles
--- ----------------------------
-DROP TABLE IF EXISTS `gar_user_roles`;
-CREATE TABLE `gar_user_roles` (
-  `user_id` BIGINT(20) DEFAULT NULL
-  COMMENT '用户ID',
-  `role_id` BIGINT(20) DEFAULT NULL
-  COMMENT '角色ID'
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
-
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for gar_user_token
--- ----------------------------
-DROP TABLE IF EXISTS `gar_user_token`;
-CREATE TABLE `gar_user_token` (
-  `user_id`     BIGINT(20) NOT NULL,
-  `token`       VARCHAR(100)        DEFAULT NULL
-  COMMENT 'token',
-  `update_time` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP
-  COMMENT '更新时间',
-  `expire_time` TIMESTAMP  NOT NULL DEFAULT '0000-00-00 00:00:00'
-  COMMENT '过期时间',
+-- 系统用户Token
+CREATE TABLE `sys_user_token` (
+  `user_id` bigint(20) NOT NULL,
+  `token` varchar(100) NOT NULL COMMENT 'token',
+  `expire_time` datetime DEFAULT NULL COMMENT '过期时间',
+  `update_time` datetime DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `token` (`token`)
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='系统用户Token';
 
--- ----------------------------
--- Records of gar_user_token
--- ----------------------------
+-- 角色
+CREATE TABLE `sys_role` (
+  `role_id` bigint NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(100) COMMENT '角色名称',
+  `remark` varchar(100) COMMENT '备注',
+  `dept_id` bigint(20) COMMENT '部门ID',
+  `create_time` datetime COMMENT '创建时间',
+  PRIMARY KEY (`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色';
 
-SET FOREIGN_KEY_CHECKS = 0;
-
--- ----------------------------
--- Table structure for gar_users
--- ----------------------------
-DROP TABLE IF EXISTS `gar_users`;
-CREATE TABLE `gar_users` (
-  `user_id`     BIGINT(20)  NOT NULL,
-  `username`    VARCHAR(50) NOT NULL
-  COMMENT '用户名',
-  `password`    VARCHAR(100)         DEFAULT NULL
-  COMMENT '密码',
-  `salt`        VARCHAR(20)          DEFAULT NULL
-  COMMENT '盐',
-  `email`       VARCHAR(100)         DEFAULT NULL
-  COMMENT '邮箱',
-  `mobile`      VARCHAR(100)         DEFAULT NULL
-  COMMENT '手机号',
-  `status`      INT(11)              DEFAULT NULL
-  COMMENT '状态  0：禁用   1：正常',
-  `create_time` TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
-  COMMENT '创建时间',
-  `admin`       INT(11)              DEFAULT '0'
-  COMMENT '是否管理员 ，0：不是，1：是',
-  PRIMARY KEY (`user_id`),
-  UNIQUE KEY `username` (`username`)
-)
-  ENGINE = InnoDB
-  DEFAULT CHARSET = utf8;
-
--- ----------------------------
--- Records of gar_users
--- ----------------------------
-INSERT INTO `gar_users` VALUES
-  ('1', 'admin', '9ec9750e709431dad22365cabc5c625482e574c74adaebba7dd02f1129e4ce1d', 'YzcmCZNvbXocrsz9dm8e',
-   'admin@richstonedt.com', '020-38838993', '1', '2016-11-11 11:11:11', '2');
-
--- ----------------------------------------
--- Table structure for gar_user_synchronize
--- ----------------------------------------
-DROP TABLE IF EXISTS `gar_user_synchronize`;
-CREATE TABLE `gar_user_synchronize` (
-  `id` bigint(20) NOT NULL,
-  `updated_time` datetime DEFAULT NULL COMMENT '上次更新时间',
+-- 用户与角色对应关系
+CREATE TABLE `sys_user_role` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint COMMENT '用户ID',
+  `role_id` bigint COMMENT '角色ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='记录上次用户同步时间';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户与角色对应关系';
 
--- ----------------------------
--- Records of gar_user_synchronize
--- ----------------------------
-INSERT INTO `gar_user_synchronize` VALUES ('1', null);
+-- 角色与菜单对应关系
+CREATE TABLE `sys_role_menu` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `role_id` bigint COMMENT '角色ID',
+  `menu_id` bigint COMMENT '菜单ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色与菜单对应关系';
+
+-- 角色与部门对应关系
+CREATE TABLE `sys_role_dept` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `role_id` bigint COMMENT '角色ID',
+  `dept_id` bigint COMMENT '部门ID',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='角色与部门对应关系';
+
+-- 系统配置信息
+CREATE TABLE `sys_config` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `key` varchar(50) COMMENT 'key',
+  `value` varchar(2000) COMMENT 'value',
+  `status` tinyint DEFAULT 1 COMMENT '状态   0：隐藏   1：显示',
+  `remark` varchar(500) COMMENT '备注',
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX (`key`)
+) ENGINE=`InnoDB` DEFAULT CHARACTER SET utf8 COMMENT='系统配置信息表';
+
+-- 系统日志
+CREATE TABLE `sys_log` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) COMMENT '用户名',
+  `operation` varchar(50) COMMENT '用户操作',
+  `method` varchar(200) COMMENT '请求方法',
+  `params` varchar(5000) COMMENT '请求参数',
+  `time` bigint NOT NULL COMMENT '执行时长(毫秒)',
+  `ip` varchar(64) COMMENT 'IP地址',
+  `create_date` datetime COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=`InnoDB` DEFAULT CHARACTER SET utf8 COMMENT='系统日志';
+
+-- 初始数据
+INSERT INTO `sys_user` (`user_id`, `username`, `password`, `salt`, `email`, `mobile`, `status`, `create_time`) VALUES ('1', 'admin', '9ec9750e709431dad22365cabc5c625482e574c74adaebba7dd02f1129e4ce1d', 'YzcmCZNvbXocrsz9dm8e', 'root@renren.io', '13612345678', '1', '2016-11-11 11:11:11');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('1', '0', '系统管理', NULL, NULL, '0', 'fa fa-cog', '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('2', '1', '用户管理', 'modules/sys/user.html', NULL, '1', 'fa fa-user', '1');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('3', '1', '角色管理', 'modules/sys/role.html', NULL, '1', 'fa fa-user-secret', '3');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('4', '1', '菜单管理', 'modules/sys/menu.html', NULL, '1', 'fa fa-th-list', '4');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('15', '2', '查看', NULL, 'sys:user:list,sys:user:info', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('16', '2', '新增', NULL, 'sys:user:save,sys:role:select', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('17', '2', '修改', NULL, 'sys:user:update,sys:role:select', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('18', '2', '删除', NULL, 'sys:user:delete', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('19', '3', '查看', NULL, 'sys:role:list,sys:role:info', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('20', '3', '新增', NULL, 'sys:role:save,sys:menu:perms', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('21', '3', '修改', NULL, 'sys:role:update,sys:menu:perms', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('22', '3', '删除', NULL, 'sys:role:delete', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('23', '4', '查看', NULL, 'sys:menu:list,sys:menu:info', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('24', '4', '新增', NULL, 'sys:menu:save,sys:menu:select', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('25', '4', '修改', NULL, 'sys:menu:update,sys:menu:select', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('26', '4', '删除', NULL, 'sys:menu:delete', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('27', '1', '参数管理', 'modules/sys/config.html', 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', '1', 'fa fa-sun-o', '6');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('29', '1', '系统日志', 'modules/sys/log.html', 'sys:log:list', '1', 'fa fa-file-text-o', '7');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('31', '1', '部门管理', 'modules/sys/dept.html', NULL, '1', 'fa fa-file-code-o', '2');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('32', '31', '查看', NULL, 'sys:dept:list,sys:dept:info', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('33', '31', '新增', NULL, 'sys:dept:save,sys:dept:select', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('34', '31', '修改', NULL, 'sys:dept:update,sys:dept:select', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('35', '31', '删除', NULL, 'sys:dept:delete', '2', NULL, '0');
+
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+-- 定时任务相关表结构，如果不使用renren-schedule模块，则不用执行下面SQL -------------------------------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- 初始化菜单数据
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('6', '1', '定时任务', 'modules/job/schedule.html', NULL, '1', 'fa fa-tasks', '5');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('7', '6', '查看', NULL, 'sys:schedule:list,sys:schedule:info', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('8', '6', '新增', NULL, 'sys:schedule:save', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('9', '6', '修改', NULL, 'sys:schedule:update', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('10', '6', '删除', NULL, 'sys:schedule:delete', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('11', '6', '暂停', NULL, 'sys:schedule:pause', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('12', '6', '恢复', NULL, 'sys:schedule:resume', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('13', '6', '立即执行', NULL, 'sys:schedule:run', '2', NULL, '0');
+INSERT INTO `sys_menu` (`menu_id`, `parent_id`, `name`, `url`, `perms`, `type`, `icon`, `order_num`) VALUES ('14', '6', '日志列表', NULL, 'sys:schedule:log', '2', NULL, '0');
+
+-- 定时任务
+CREATE TABLE `schedule_job` (
+  `job_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '任务id',
+  `bean_name` varchar(200) DEFAULT NULL COMMENT 'spring bean名称',
+  `method_name` varchar(100) DEFAULT NULL COMMENT '方法名',
+  `params` varchar(2000) DEFAULT NULL COMMENT '参数',
+  `cron_expression` varchar(100) DEFAULT NULL COMMENT 'cron表达式',
+  `status` tinyint(4) DEFAULT NULL COMMENT '任务状态  0：正常  1：暂停',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`job_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='定时任务';
+
+-- 定时任务日志
+CREATE TABLE `schedule_job_log` (
+  `log_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '任务日志id',
+  `job_id` bigint(20) NOT NULL COMMENT '任务id',
+  `bean_name` varchar(200) DEFAULT NULL COMMENT 'spring bean名称',
+  `method_name` varchar(100) DEFAULT NULL COMMENT '方法名',
+  `params` varchar(2000) DEFAULT NULL COMMENT '参数',
+  `status` tinyint(4) NOT NULL COMMENT '任务状态    0：成功    1：失败',
+  `error` varchar(2000) DEFAULT NULL COMMENT '失败信息',
+  `times` int(11) NOT NULL COMMENT '耗时(单位：毫秒)',
+  `create_time` datetime DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`log_id`),
+  KEY `job_id` (`job_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='定时任务日志';
+
+
+
+INSERT INTO `schedule_job` (`bean_name`, `method_name`, `params`, `cron_expression`, `status`, `remark`, `create_time`) VALUES ('testTask', 'test', 'renren', '0 0/30 * * * ?', '0', '有参数测试', '2016-12-01 23:16:46');
+INSERT INTO `schedule_job` (`bean_name`, `method_name`, `params`, `cron_expression`, `status`, `remark`, `create_time`) VALUES ('testTask', 'test2', NULL, '0 0/30 * * * ?', '1', '无参数测试', '2016-12-03 14:55:56');
+
+
+--  quartz自带表结构
+CREATE TABLE QRTZ_JOB_DETAILS(
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  JOB_NAME VARCHAR(200) NOT NULL,
+  JOB_GROUP VARCHAR(200) NOT NULL,
+  DESCRIPTION VARCHAR(250) NULL,
+  JOB_CLASS_NAME VARCHAR(250) NOT NULL,
+  IS_DURABLE VARCHAR(1) NOT NULL,
+  IS_NONCONCURRENT VARCHAR(1) NOT NULL,
+  IS_UPDATE_DATA VARCHAR(1) NOT NULL,
+  REQUESTS_RECOVERY VARCHAR(1) NOT NULL,
+  JOB_DATA BLOB NULL,
+  PRIMARY KEY (SCHED_NAME,JOB_NAME,JOB_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_TRIGGERS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  TRIGGER_NAME VARCHAR(200) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  JOB_NAME VARCHAR(200) NOT NULL,
+  JOB_GROUP VARCHAR(200) NOT NULL,
+  DESCRIPTION VARCHAR(250) NULL,
+  NEXT_FIRE_TIME BIGINT(13) NULL,
+  PREV_FIRE_TIME BIGINT(13) NULL,
+  PRIORITY INTEGER NULL,
+  TRIGGER_STATE VARCHAR(16) NOT NULL,
+  TRIGGER_TYPE VARCHAR(8) NOT NULL,
+  START_TIME BIGINT(13) NOT NULL,
+  END_TIME BIGINT(13) NULL,
+  CALENDAR_NAME VARCHAR(200) NULL,
+  MISFIRE_INSTR SMALLINT(2) NULL,
+  JOB_DATA BLOB NULL,
+  PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+  FOREIGN KEY (SCHED_NAME,JOB_NAME,JOB_GROUP)
+  REFERENCES QRTZ_JOB_DETAILS(SCHED_NAME,JOB_NAME,JOB_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_SIMPLE_TRIGGERS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  TRIGGER_NAME VARCHAR(200) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  REPEAT_COUNT BIGINT(7) NOT NULL,
+  REPEAT_INTERVAL BIGINT(12) NOT NULL,
+  TIMES_TRIGGERED BIGINT(10) NOT NULL,
+  PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+  FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+  REFERENCES QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_CRON_TRIGGERS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  TRIGGER_NAME VARCHAR(200) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  CRON_EXPRESSION VARCHAR(120) NOT NULL,
+  TIME_ZONE_ID VARCHAR(80),
+  PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+  FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+  REFERENCES QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_SIMPROP_TRIGGERS
+(
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  TRIGGER_NAME VARCHAR(200) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  STR_PROP_1 VARCHAR(512) NULL,
+  STR_PROP_2 VARCHAR(512) NULL,
+  STR_PROP_3 VARCHAR(512) NULL,
+  INT_PROP_1 INT NULL,
+  INT_PROP_2 INT NULL,
+  LONG_PROP_1 BIGINT NULL,
+  LONG_PROP_2 BIGINT NULL,
+  DEC_PROP_1 NUMERIC(13,4) NULL,
+  DEC_PROP_2 NUMERIC(13,4) NULL,
+  BOOL_PROP_1 VARCHAR(1) NULL,
+  BOOL_PROP_2 VARCHAR(1) NULL,
+  PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+  FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+  REFERENCES QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_BLOB_TRIGGERS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  TRIGGER_NAME VARCHAR(200) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  BLOB_DATA BLOB NULL,
+  PRIMARY KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP),
+  INDEX (SCHED_NAME,TRIGGER_NAME, TRIGGER_GROUP),
+  FOREIGN KEY (SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP)
+  REFERENCES QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_CALENDARS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  CALENDAR_NAME VARCHAR(200) NOT NULL,
+  CALENDAR BLOB NOT NULL,
+  PRIMARY KEY (SCHED_NAME,CALENDAR_NAME))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_PAUSED_TRIGGER_GRPS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  PRIMARY KEY (SCHED_NAME,TRIGGER_GROUP))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_FIRED_TRIGGERS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  ENTRY_ID VARCHAR(95) NOT NULL,
+  TRIGGER_NAME VARCHAR(200) NOT NULL,
+  TRIGGER_GROUP VARCHAR(200) NOT NULL,
+  INSTANCE_NAME VARCHAR(200) NOT NULL,
+  FIRED_TIME BIGINT(13) NOT NULL,
+  SCHED_TIME BIGINT(13) NOT NULL,
+  PRIORITY INTEGER NOT NULL,
+  STATE VARCHAR(16) NOT NULL,
+  JOB_NAME VARCHAR(200) NULL,
+  JOB_GROUP VARCHAR(200) NULL,
+  IS_NONCONCURRENT VARCHAR(1) NULL,
+  REQUESTS_RECOVERY VARCHAR(1) NULL,
+  PRIMARY KEY (SCHED_NAME,ENTRY_ID))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_SCHEDULER_STATE (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  INSTANCE_NAME VARCHAR(200) NOT NULL,
+  LAST_CHECKIN_TIME BIGINT(13) NOT NULL,
+  CHECKIN_INTERVAL BIGINT(13) NOT NULL,
+  PRIMARY KEY (SCHED_NAME,INSTANCE_NAME))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE QRTZ_LOCKS (
+  SCHED_NAME VARCHAR(120) NOT NULL,
+  LOCK_NAME VARCHAR(40) NOT NULL,
+  PRIMARY KEY (SCHED_NAME,LOCK_NAME))
+  ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE INDEX IDX_QRTZ_J_REQ_RECOVERY ON QRTZ_JOB_DETAILS(SCHED_NAME,REQUESTS_RECOVERY);
+CREATE INDEX IDX_QRTZ_J_GRP ON QRTZ_JOB_DETAILS(SCHED_NAME,JOB_GROUP);
+
+CREATE INDEX IDX_QRTZ_T_J ON QRTZ_TRIGGERS(SCHED_NAME,JOB_NAME,JOB_GROUP);
+CREATE INDEX IDX_QRTZ_T_JG ON QRTZ_TRIGGERS(SCHED_NAME,JOB_GROUP);
+CREATE INDEX IDX_QRTZ_T_C ON QRTZ_TRIGGERS(SCHED_NAME,CALENDAR_NAME);
+CREATE INDEX IDX_QRTZ_T_G ON QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_GROUP);
+CREATE INDEX IDX_QRTZ_T_STATE ON QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_STATE);
+CREATE INDEX IDX_QRTZ_T_N_STATE ON QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP,TRIGGER_STATE);
+CREATE INDEX IDX_QRTZ_T_N_G_STATE ON QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_GROUP,TRIGGER_STATE);
+CREATE INDEX IDX_QRTZ_T_NEXT_FIRE_TIME ON QRTZ_TRIGGERS(SCHED_NAME,NEXT_FIRE_TIME);
+CREATE INDEX IDX_QRTZ_T_NFT_ST ON QRTZ_TRIGGERS(SCHED_NAME,TRIGGER_STATE,NEXT_FIRE_TIME);
+CREATE INDEX IDX_QRTZ_T_NFT_MISFIRE ON QRTZ_TRIGGERS(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME);
+CREATE INDEX IDX_QRTZ_T_NFT_ST_MISFIRE ON QRTZ_TRIGGERS(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_STATE);
+CREATE INDEX IDX_QRTZ_T_NFT_ST_MISFIRE_GRP ON QRTZ_TRIGGERS(SCHED_NAME,MISFIRE_INSTR,NEXT_FIRE_TIME,TRIGGER_GROUP,TRIGGER_STATE);
+
+CREATE INDEX IDX_QRTZ_FT_TRIG_INST_NAME ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,INSTANCE_NAME);
+CREATE INDEX IDX_QRTZ_FT_INST_JOB_REQ_RCVRY ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,INSTANCE_NAME,REQUESTS_RECOVERY);
+CREATE INDEX IDX_QRTZ_FT_J_G ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,JOB_NAME,JOB_GROUP);
+CREATE INDEX IDX_QRTZ_FT_JG ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,JOB_GROUP);
+CREATE INDEX IDX_QRTZ_FT_T_G ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,TRIGGER_NAME,TRIGGER_GROUP);
+CREATE INDEX IDX_QRTZ_FT_TG ON QRTZ_FIRED_TRIGGERS(SCHED_NAME,TRIGGER_GROUP);

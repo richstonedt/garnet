@@ -16,14 +16,13 @@ import java.util.Properties;
 
 /**
  * <b><code>KaptchaConfig</code></b>
- * <p>
- * class_comment
- * </p>
- * <b>Create Time:</b> 2017/10/17 10:45
+ * <p/>
+ * Kaptcha config.
+ * <p/>
+ * <b>Creation Time:</b> 2017/8/21 12:04.
  *
- * @author Sun Jinpeng
- * @version 0.1.0
- * @since garnet-core-be-fe 0.1.0
+ * @author chenzechao
+ * @since garnet-core-be-fe 1.0.0
  */
 @Configuration
 public class KaptchaConfig {
@@ -32,7 +31,8 @@ public class KaptchaConfig {
      * Producer default kaptcha.
      *
      * @return the default kaptcha
-     * @since garnet-core-be-fe 0.1.0
+     * @see com.google.code.kaptcha.Constants
+     * @since garnet-core-be-fe 1.0.0
      */
     @Bean
     public DefaultKaptcha producer() {
@@ -44,4 +44,5 @@ public class KaptchaConfig {
         defaultKaptcha.setConfig(new Config(properties));
         return defaultKaptcha;
     }
+
 }

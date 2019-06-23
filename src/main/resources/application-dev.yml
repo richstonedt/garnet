@@ -1,6 +1,20 @@
 spring:
     datasource:
-        url: jdbc:postgresql://192.168.8.115:5432/garnet_travel
-        username: postgres
-        password: postgres
-        driverClassName: org.postgresql.Driver
+        url: jdbc:mysql://192.168.6.97:3306/garnet
+        username: root
+        password: 123456
+        driverClassName: com.mysql.jdbc.Driver
+        #连接池的配置信息
+        type: com.alibaba.druid.pool.DruidDataSource
+        initialSize: 10
+        minIdle: 10
+        maxActive: 100
+        maxWait: 60000
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxPoolPreparedStatementPerConnectionSize: 20
